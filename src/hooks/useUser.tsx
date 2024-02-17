@@ -1,6 +1,6 @@
 import Cookie from "js-cookie";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { clearUser, newUser, setIsLoaded } from "../store/userSlice";
+import { clearUser, newUser, setIsLoaded } from "../store/slices/userSlice";
 import { useQuery } from "@tanstack/react-query";
 
 interface QueryRes {
