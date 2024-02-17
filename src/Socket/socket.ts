@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 import { Dispatch } from "react";
 import { Socket, io } from "socket.io-client";
 
@@ -21,7 +22,7 @@ export function createSocketAndContext(
 ) {
   const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
     process.env.REACT_APP_SOCKET_URL as string,
-    { auth: { token: "token" } },
+    { auth: { token: Cookies.get("chat_token") } },
   );
 
   socket.on("new_message", (event) => {

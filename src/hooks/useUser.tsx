@@ -1,18 +1,60 @@
-import Cookies from "js-cookie";
+import Cookie from "js-cookie";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { clearUser } from "../store/userSlice";
+import { clearUser, newUser, setIsLoaded } from "../store/userSlice";
+import { useQuery } from "@tanstack/react-query";
+
+interface QueryRes {
+  valid: boolean;
+  firstName: string;
+  lastName: string;
+  picture: string;
+}
 
 export default function useUser() {
+  const oldToken = Cookie.get("chat_token");
   const selector = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
 
+  const { isFetched } = useQuery({
+    queryKey: ["useUser"],
+    queryFn: async () => {
+      const r: QueryRes = await fetch(
+        `${process.env.REACT_APP_API_URL}/auth/jwt/verify/${oldToken}`,
+        {
+          headers: {
+            Authorization: oldToken!,
+          },
+        },
+      )
+        .then(async (res) => await res.json())
+        .catch((e) => console.log(e));
+
+      if (r.valid) {
+        dispatch(
+          newUser({
+            firstName: r.firstName,
+            lastName: r.lastName,
+            picture: r.picture,
+            token: oldToken!,
+          }),
+          setIsLoaded(true),
+        );
+      } else {
+        dispatch(setIsLoaded(true));
+      }
+
+      return r;
+    },
+    enabled: oldToken !== undefined,
+  });
+
   return {
-    isLoaded: selector.isLoaded,
+    isLoaded: isFetched || oldToken === undefined || selector.isLoaded,
     user: selector.user,
     isSignedIn: selector.isSignedIn,
     signOut: () => {
       dispatch(clearUser());
-      Cookies.remove("chat_token");
+      Cookie.remove("chat_token");
     },
   };
 }

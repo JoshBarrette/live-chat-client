@@ -30,8 +30,9 @@ export const userSlice = createSlice({
     },
     newUser: (state, action: PayloadAction<userObj>) => {
       state.user = action.payload;
-      state.isLoaded = true;
+      
       state.isSignedIn = true;
+      state.isLoaded = true;
     },
     newToken: (state, action: PayloadAction<string>) => {
       if (!state.user) return;
