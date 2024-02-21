@@ -7,9 +7,10 @@ export default function Chat() {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { user, isSignedIn, signOut } = useUser();
   const [messages, setMessages] = useState<string[]>([]);
+  const [connectedUsers, setConnectedUsers] = useState<string[]>([]);
   const socket = ChatSocket.getInstance((s: string) => {
     setMessages([...messages, s]);
-  });
+  }, setConnectedUsers);
 
   function handleForm(e: FormEvent) {
     e.preventDefault();
@@ -24,32 +25,46 @@ export default function Chat() {
       },
       message: inputRef.current?.value ?? "no input ref :)",
     });
+
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
   }
 
   return (
     <>
       <form onSubmit={handleForm}>
-        <input ref={inputRef} />
+        <input ref={inputRef} disabled={!isSignedIn} />
         <button disabled={!isSignedIn} type="submit">
           send message
         </button>
-
-        {isSignedIn ? (
-          <button onClick={signOut}>sign out</button>
-        ) : (
-          <button>
-            <Link to={`${process.env.REACT_APP_API_URL}/auth/google/login`}>
-              sign in
-            </Link>
-          </button>
-        )}
       </form>
+
+      {isSignedIn ? (
+        <button onClick={signOut}>sign out</button>
+      ) : (
+        <button>
+          <Link to={`${process.env.REACT_APP_API_URL}/auth/google/login`}>
+            sign in
+          </Link>
+        </button>
+      )}
 
       <button onClick={() => setMessages([])}>clear messages</button>
 
       <div id="chatBox">
+        {messages.length > 0 && <p>Chat:</p>}
+
         {messages.map((message, key) => (
           <p key={key + message}>{message}</p>
+        ))}
+      </div>
+
+      <div id="usersBox">
+        {connectedUsers.length > 0 && <p>Connected Users:</p>}
+
+        {connectedUsers.map((user, key) => (
+          <p key={key + user}>{user}</p>
         ))}
       </div>
     </>

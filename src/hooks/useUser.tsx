@@ -2,6 +2,7 @@ import Cookie from "js-cookie";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { clearUser, newUser, setIsLoaded } from "../store/slices/userSlice";
 import { useQuery } from "@tanstack/react-query";
+import { ChatSocket } from "../lib/ChatSocket";
 
 interface QueryRes {
   valid: boolean;
@@ -53,6 +54,7 @@ export default function useUser() {
     user: selector.user,
     isSignedIn: selector.isSignedIn,
     signOut: () => {
+      ChatSocket.userSignOut();
       dispatch(clearUser());
       Cookie.remove("chat_token");
     },
