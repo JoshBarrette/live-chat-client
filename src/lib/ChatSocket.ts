@@ -9,7 +9,7 @@ export class ChatSocket {
 
   private constructor() {
     ChatSocket.socket = io(
-      (process.env.REACT_APP_SOCKET_URL + "/chat") as string,
+      (import.meta.env.VITE_APP_SOCKET_URL + "/chat") as string,
       {
         auth: { token: Cookies.get("chat_token") },
       },

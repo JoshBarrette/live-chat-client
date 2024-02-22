@@ -44,7 +44,7 @@ export default function Chat() {
         <button onClick={signOut}>sign out</button>
       ) : (
         <button>
-          <Link to={`${process.env.REACT_APP_API_URL}/auth/google/login`}>
+          <Link to={`${import.meta.env.VITE_APP_API_URL}/auth/google/login`}>
             sign in
           </Link>
         </button>
