@@ -1,13 +1,15 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import useUser from "../hooks/useUser";
 import { ChatSocket } from "../lib/ChatSocket";
+import { Link } from "react-router-dom";
+import UserButton from "./UserButton";
 
 export default function Chat() {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const chatBoxRef = useRef<HTMLDivElement | null>(null);
-  const { user, isSignedIn } = useUser();
+  const { user, isSignedIn, signOut } = useUser();
   const [messages, setMessages] = useState<string[]>([]);
-  const [, setConnectedUsers] = useState<string[]>([]);
+  const [connectedUsers, setConnectedUsers] = useState<string[]>([]);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const socket = ChatSocket.getInstance((s: string) => {
     setMessages([...messages, s]);
@@ -78,13 +80,7 @@ export default function Chat() {
           />
           <span className="flex space-x-4">
             <SendMessageButton isSignedIn={isSignedIn} />
-            {isSignedIn && (
-              <img
-                src={user?.picture}
-                alt="pfp"
-                className="my-auto size-12 rounded-full bg-slate-600"
-              />
-            )}
+            <UserButton />
           </span>
         </form>
       </div>
@@ -104,11 +100,17 @@ function SendMessageButton({ isSignedIn }: { isSignedIn: boolean }) {
   return (
     <>
       <button
-        className="max-w-full flex-grow rounded bg-blue-300 py-2 transition-all hover:bg-blue-400 disabled:bg-blue-900 disabled:text-white"
+        className="max-w-full flex-grow rounded bg-blue-300 py-2 transition-all hover:bg-blue-400 disabled:text-white"
         disabled={!isSignedIn}
         type="submit"
       >
-        {isSignedIn ? "Send Message" : "Sign in to Chat!"}
+        {isSignedIn ? (
+          "Send Message"
+        ) : (
+          <Link to={`${import.meta.env.VITE_APP_API_URL}/auth/google/login`}>
+            Sign in to Chat!
+          </Link>
+        )}
       </button>
     </>
   );
