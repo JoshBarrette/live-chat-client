@@ -52,11 +52,11 @@ export class ChatSocket {
     );
   }
 
-  handleNewMessage(event: any) {
+  handleNewMessage(event: NewMessageEvent) {
     ChatSocket.messageSetter(event.data.username + ": " + event.data.message);
   }
 
-  handleNewUsers(event: any) {
+  handleNewUsers(event: UpdateConnectedUsersEvent) {
     ChatSocket.connectedUsersSetter(event.data.users);
   }
 
@@ -79,12 +79,18 @@ export interface sendMessagePayload {
   user: userType;
 }
 
+interface NewMessageEvent {
+  data: { username: string; message: string; picture: string };
+}
+
+interface UpdateConnectedUsersEvent {
+  data: { users: string[] };
+}
+
 export interface ServerToClientEvents {
   message: (event: { data: string }) => void;
-  new_message: (event: {
-    data: { username: string; message: string; picture: string };
-  }) => void;
-  update_connected_users: (event: { data: { users: string[] } }) => void;
+  new_message: (event: NewMessageEvent) => void;
+  update_connected_users: (event: UpdateConnectedUsersEvent) => void;
 }
 
 export interface ClientToServerEvents {
