@@ -1,23 +1,24 @@
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import useUser from "../hooks/useUser";
-import { ChatSocket } from "../lib/ChatSocket";
-import { Link } from "react-router-dom";
 import UserButton from "./UserButton";
+import SendMessageButton from "./SendMessageButton";
+import ChatBox from "./ChatBox";
+import { ChatSocket } from "../lib/ChatSocket";
+
+export interface ChatMessage {
+  username: string;
+  content: string;
+  picture: string;
+}
 
 export default function Chat() {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const chatBoxRef = useRef<HTMLDivElement | null>(null);
-  const { user, isSignedIn, signOut } = useUser();
-  const [messages, setMessages] = useState<string[]>([]);
+  const { user, isSignedIn } = useUser();
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [connectedUsers, setConnectedUsers] = useState<string[]>([]);
-  const [showScrollButton, setShowScrollButton] = useState(false);
-  const socket = ChatSocket.getInstance((s: string) => {
-    setMessages([...messages, s]);
+  const socket = ChatSocket.getInstance((newMessage: ChatMessage) => {
+    setMessages([...messages, newMessage]);
   }, setConnectedUsers);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
 
   function handleForm(e: FormEvent) {
     e.preventDefault();
@@ -38,38 +39,10 @@ export default function Chat() {
     }
   }
 
-  function handleScroll(e: React.UIEvent<HTMLDivElement, UIEvent>) {
-    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
-    setShowScrollButton(!(scrollTop + clientHeight >= scrollHeight));
-  }
-
-  function scrollToBottom() {
-    if (chatBoxRef.current) {
-      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-    }
-  }
-
   return (
     <div className="container mx-auto flex h-screen flex-col text-lg">
       <div className="m-auto flex h-full w-[30rem] flex-col items-center justify-center">
-        <div className="relative flex h-3/4 w-full flex-col">
-          <div
-            id="chatBox"
-            ref={chatBoxRef}
-            className="mx-auto flex h-full w-full flex-col overflow-y-auto break-all rounded bg-slate-200 px-4 py-2"
-            onScroll={handleScroll}
-          >
-            <button
-              className={`absolute bottom-2 right-6 size-7 rounded-full bg-blue-300 transition-all hover:bg-blue-400 ${showScrollButton ? "scale-100" : "scale-0"}`}
-              onClick={scrollToBottom}
-            >
-              V
-            </button>
-            {messages.map((message, key) => (
-              <p key={key + message}>{message}</p>
-            ))}
-          </div>
-        </div>
+        <ChatBox messages={messages} />
 
         <form onSubmit={handleForm} className="mx-auto mt-4 w-full space-y-4">
           <input
@@ -79,7 +52,7 @@ export default function Chat() {
             disabled={!isSignedIn}
           />
           <span className="flex space-x-4">
-            <SendMessageButton isSignedIn={isSignedIn} />
+            <SendMessageButton />
             <UserButton />
           </span>
         </form>
@@ -93,25 +66,5 @@ export default function Chat() {
         ))}
       </div> */}
     </div>
-  );
-}
-
-function SendMessageButton({ isSignedIn }: { isSignedIn: boolean }) {
-  return (
-    <>
-      <button
-        className="max-w-full flex-grow rounded bg-blue-300 py-2 transition-all hover:bg-blue-400 disabled:text-white"
-        disabled={!isSignedIn}
-        type="submit"
-      >
-        {isSignedIn ? (
-          "Send Message"
-        ) : (
-          <Link to={`${import.meta.env.VITE_APP_API_URL}/auth/google/login`}>
-            Sign in to Chat!
-          </Link>
-        )}
-      </button>
-    </>
   );
 }

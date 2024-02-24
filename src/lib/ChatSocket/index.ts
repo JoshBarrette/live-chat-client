@@ -1,15 +1,23 @@
 import { Socket, io } from "socket.io-client";
 import Cookies from "js-cookie";
+import { ChatMessage } from "../../Components/Chat";
+import {
+  ClientToServerEvents,
+  NewMessageEvent,
+  ServerToClientEvents,
+  UpdateConnectedUsersEvent,
+  sendMessagePayload,
+} from "./types";
 
 export class ChatSocket {
   private static socket: Socket<ServerToClientEvents, ClientToServerEvents>;
-  private static messageSetter: (s: string) => void;
+  private static messageSetter: (newMessage: ChatMessage) => void;
   private static connectedUsersSetter: (arr: string[]) => void;
   private static instance: ChatSocket | null = null;
 
   private constructor() {
     ChatSocket.socket = io(
-      (import.meta.env.VITE_APP_SOCKET_URL + "/chat") as string,
+      (import.meta.env.VITE_APP_API_URL + "/chat") as string,
       {
         auth: { token: Cookies.get("chat_token") },
       },
@@ -19,7 +27,7 @@ export class ChatSocket {
   }
 
   static getInstance(
-    messageSetter: (s: string) => void,
+    messageSetter: (newMessage: ChatMessage) => void,
     connectedUsersSetter: (arr: string[]) => void,
   ) {
     if (!ChatSocket.instance) {
@@ -53,7 +61,11 @@ export class ChatSocket {
   }
 
   handleNewMessage(event: NewMessageEvent) {
-    ChatSocket.messageSetter(event.data.username + ": " + event.data.message);
+    ChatSocket.messageSetter({
+      username: event.data.username,
+      content: event.data.message,
+      picture: event.data.picture,
+    });
   }
 
   handleNewUsers(event: UpdateConnectedUsersEvent) {
@@ -66,35 +78,4 @@ export class ChatSocket {
       message: data.message,
     });
   }
-}
-
-export interface userType {
-  firstName: string;
-  lastName: string;
-  picture: string;
-}
-
-export interface sendMessagePayload {
-  message: string;
-  user: userType;
-}
-
-interface NewMessageEvent {
-  data: { username: string; message: string; picture: string };
-}
-
-interface UpdateConnectedUsersEvent {
-  data: { users: string[] };
-}
-
-export interface ServerToClientEvents {
-  message: (event: { data: string }) => void;
-  new_message: (event: NewMessageEvent) => void;
-  update_connected_users: (event: UpdateConnectedUsersEvent) => void;
-}
-
-export interface ClientToServerEvents {
-  message: (m: string) => void;
-  send_message: (data: { user: userType; message: string }) => void;
-  user_disconnect: () => void;
 }

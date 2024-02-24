@@ -2,8 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import useUser from "../hooks/useUser";
 
 export default function UserButton() {
-  const optsRef = useRef<HTMLDivElement | null>(null);
-  const imgRef = useRef<HTMLImageElement | null>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
   const { user, isSignedIn, signOut } = useUser();
   const [showOpts, setShowOpts] = useState(false);
 
@@ -13,10 +12,8 @@ export default function UserButton() {
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
-      optsRef.current &&
-      imgRef.current &&
-      !optsRef.current.contains(event.target as Node) &&
-      !imgRef.current.contains(event.target as Node)
+      contentRef.current &&
+      !contentRef.current.contains(event.target as Node)
     ) {
       setShowOpts(false);
     }
@@ -27,21 +24,21 @@ export default function UserButton() {
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [optsRef]);
+  }, [contentRef]);
 
   if (!isSignedIn) return null;
 
   return (
-    <div className="relative rounded-full">
+    <div className="relative rounded-full" ref={contentRef}>
       <img
         src={user?.picture}
-        alt="pfp"
-        className="my-auto size-12 rounded-full bg-slate-600 cursor-pointer"
-        ref={imgRef}
+        alt="profile picture"
+        className="my-auto rounded-full bg-slate-600 cursor-pointer"
         onClick={toggleShowOpts}
+        width="48"
+        height="48"
       />
       <div
-        ref={optsRef}
         className={`absolute bg-red-500 right-2 -top-2 rounded z-40 -translate-y-full ${showOpts ? "scale-100" : "scale-0"}`}
       >
         <button className="whitespace-nowrap" onClick={signOut}>
