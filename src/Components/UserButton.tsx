@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import useUser from "../hooks/useUser";
+import { Button } from "./Button";
 
 export default function UserButton() {
   const contentRef = useRef<HTMLDivElement | null>(null);
@@ -29,22 +30,33 @@ export default function UserButton() {
   if (!isSignedIn) return null;
 
   return (
-    <div className="relative rounded-full" ref={contentRef}>
-      <img
-        src={user?.picture}
-        alt="profile picture"
-        className="my-auto rounded-full bg-slate-600 cursor-pointer"
-        onClick={toggleShowOpts}
-        width="48"
-        height="48"
-      />
-      <div
-        className={`absolute bg-red-500 right-2 -top-2 rounded z-40 -translate-y-full ${showOpts ? "scale-100" : "scale-0"}`}
+    <div className="relative" ref={contentRef}>
+      <button
+        className={`rounded-full flex transition-all ring-blue-400 ${showOpts ? "ring" : "ring-0"}`}
       >
-        <button className="whitespace-nowrap" onClick={signOut}>
+        <img
+          src={user?.picture}
+          alt="profile picture"
+          className="rounded-full bg-slate-600"
+          onClick={toggleShowOpts}
+          width="48"
+          height="48"
+        />
+      </button>
+      <div
+        className={`absolute border w-48 bg-white rounded p-0.5 border-neutral-500 right-2 -top-2 z-40 -translate-y-full ${showOpts ? "scale-100" : "scale-0"}`}
+      >
+        <Button
+          className="rounded-none whitespace-nowrap w-full py-1 px-2"
+          onClick={signOut}
+        >
           Sign Out
-        </button>
+        </Button>
       </div>
     </div>
   );
 }
+
+// function Spacer() {
+//   return <hr className="my-2 border-t border-black" />;
+// }

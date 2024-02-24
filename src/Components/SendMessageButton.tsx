@@ -7,7 +7,10 @@ export default function SendMessageButton() {
   return (
     <>
       {isSignedIn ? (
-        <Button className="max-w-full flex-grow" type="submit">
+        <Button
+          className="max-w-full flex-grow"
+          type="submit"
+        >
           Send Message
         </Button>
       ) : (
