@@ -8,7 +8,7 @@ export const Button = forwardRef<
   return (
     <button
       className={cn(
-        "rounded bg-blue-300 py-2 px-4 transition-all hover:bg-blue-400 disabled:text-white",
+        "rounded bg-slate-400 py-2 px-4 transition-all hover:bg-slate-500 disabled:text-white",
         className,
       )}
       {...props}

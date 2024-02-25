@@ -32,7 +32,7 @@ export default function UserButton() {
   return (
     <div className="relative" ref={contentRef}>
       <button
-        className={`rounded-br flex transition-all ring-blue-400 ${showOpts ? "ring" : "ring-0"}`}
+        className={`rounded-br flex transition-all ring-slate-600 ${showOpts ? "ring" : "ring-0"}`}
       >
         <img
           src={user?.picture}
