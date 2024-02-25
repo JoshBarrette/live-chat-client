@@ -4,6 +4,7 @@ import { ChatMessage } from "../../Components/Chat";
 import {
   ClientToServerEvents,
   NewMessageEvent,
+  RecentMessageEvent,
   ServerToClientEvents,
   UpdateConnectedUsersEvent,
   sendMessagePayload,
@@ -11,8 +12,9 @@ import {
 
 export class ChatSocket {
   private static socket: Socket<ServerToClientEvents, ClientToServerEvents>;
-  private static messageSetter: (newMessage: ChatMessage) => void;
+  private static messageSetter: (newMessages: ChatMessage[]) => void;
   private static connectedUsersSetter: (arr: string[]) => void;
+  private static errorSetter: (b: boolean) => void;
   private static instance: ChatSocket | null = null;
 
   private constructor() {
@@ -26,15 +28,17 @@ export class ChatSocket {
     this.buildSocket();
   }
 
-  static getInstance(
-    messageSetter: (newMessage: ChatMessage) => void,
-    connectedUsersSetter: (arr: string[]) => void,
-  ) {
+  static getInstance(props: {
+    messageSetter: (newMessages: ChatMessage[]) => void;
+    connectedUsersSetter: (arr: string[]) => void;
+    errorSetter: (b: boolean) => void;
+  }) {
     if (!ChatSocket.instance) {
       ChatSocket.instance = new ChatSocket();
     }
-    ChatSocket.messageSetter = messageSetter;
-    ChatSocket.connectedUsersSetter = connectedUsersSetter;
+    ChatSocket.messageSetter = props.messageSetter;
+    ChatSocket.connectedUsersSetter = props.connectedUsersSetter;
+    ChatSocket.errorSetter = props.errorSetter;
     return ChatSocket.instance;
   }
 
@@ -43,29 +47,30 @@ export class ChatSocket {
   }
 
   buildSocket() {
+    ChatSocket.socket.on("connect", () => {
+      ChatSocket.errorSetter(false);
+    });
+    ChatSocket.socket.on("connect_error", () => {
+      ChatSocket.errorSetter(true);
+    });
+
     ChatSocket.socket.on("new_message", (event) =>
       this.handleNewMessage(event),
     );
+    ChatSocket.socket.on("recent_messages", (event) => {
+      this.handleRecentMessages(event);
+    });
     ChatSocket.socket.on("update_connected_users", (event) =>
       this.handleNewUsers(event),
     );
   }
 
-  destroySocket() {
-    ChatSocket.socket.off("new_message", (event) =>
-      this.handleNewMessage(event),
-    );
-    ChatSocket.socket.off("update_connected_users", (event) =>
-      this.handleNewUsers(event),
-    );
+  handleNewMessage(event: NewMessageEvent) {
+    ChatSocket.messageSetter([event.data]);
   }
 
-  handleNewMessage(event: NewMessageEvent) {
-    ChatSocket.messageSetter({
-      username: event.data.username,
-      content: event.data.message,
-      picture: event.data.picture,
-    });
+  handleRecentMessages(event: RecentMessageEvent) {
+    ChatSocket.messageSetter(event.data);
   }
 
   handleNewUsers(event: UpdateConnectedUsersEvent) {
@@ -75,7 +80,7 @@ export class ChatSocket {
   sendMessage(data: sendMessagePayload) {
     ChatSocket.socket.emit("send_message", {
       user: data.user,
-      message: data.message,
+      content: data.message,
     });
   }
 }
