@@ -32,22 +32,22 @@ export default function UserButton() {
   return (
     <div className="relative" ref={contentRef}>
       <button
-        className={`rounded-br flex transition-all ring-slate-600 ${showOpts ? "ring" : "ring-0"}`}
+        className={`flex rounded-full ring-slate-600 transition-all ${showOpts ? "ring" : "ring-0"}`}
       >
         <img
           src={user?.picture}
           alt="profile picture"
-          className="rounded-br bg-slate-600"
+          className="rounded-full bg-slate-600"
           onClick={toggleShowOpts}
           width="48"
           height="48"
         />
       </button>
       <div
-        className={`absolute border transition-all w-48 bg-white rounded p-0.5 border-neutral-500 right-2 -top-2 z-40 -translate-y-full ${showOpts ? "scale-100" : "scale-0"}`}
+        className={`absolute -top-2 right-2 z-40 w-48 -translate-y-full rounded-lg border border-neutral-400 bg-white p-1.5 transition-all ${showOpts ? "scale-100" : "scale-0"}`}
       >
         <Button
-          className="rounded-none whitespace-nowrap w-full py-1 px-2"
+          className="w-full whitespace-nowrap px-2 py-1"
           onClick={signOut}
         >
           Sign Out

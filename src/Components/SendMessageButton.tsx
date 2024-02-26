@@ -7,16 +7,13 @@ export default function SendMessageButton() {
   return (
     <>
       {isSignedIn ? (
-        <Button
-          className="max-w-full h-12 flex-grow rounded-r-none rounded-tl-none"
-          type="submit"
-        >
+        <Button className="h-12 max-w-full flex-grow" type="submit">
           Send Message
         </Button>
       ) : (
-        <Button className="p-0 h-12 flex-grow rounded-t-none">
+        <Button className="h-12 flex-grow p-0">
           <a href={`${import.meta.env.VITE_APP_API_URL}/api/auth/google/login`}>
-            <p className="max-w-full h-full py-2 rounded-b">Sign In to Chat!</p>
+            <p className="h-full max-w-full rounded-b py-2">Sign In to Chat!</p>
           </a>
         </Button>
       )}

@@ -3,27 +3,12 @@ import useUser from "../hooks/useUser";
 import UserButton from "./UserButton";
 import SendMessageButton from "./SendMessageButton";
 import ChatBox from "./ChatBox";
-import { ChatSocket } from "../lib/ChatSocket";
-
-export interface ChatMessage {
-  username: string;
-  content: string;
-  picture: string;
-}
+import useChat from "../hooks/useChat";
 
 export default function Chat() {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { user } = useUser();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [connectedUsers, setConnectedUsers] = useState<string[]>([]);
-  const [error, setError] = useState<boolean>(false);
-  const socket = ChatSocket.getInstance({
-    messageSetter: (newMessages: ChatMessage[]) => {
-      setMessages([...messages, ...newMessages]);
-    },
-    connectedUsersSetter: setConnectedUsers,
-    errorSetter: setError,
-  });
+  const { messages, connectedUsers, showError, socket } = useChat();
 
   function handleForm(e: FormEvent) {
     e.preventDefault();
@@ -45,14 +30,14 @@ export default function Chat() {
   return (
     <>
       <div className="container mx-auto flex h-screen flex-col text-lg">
-        <div className="m-auto flex h-full w-[30rem] flex-col items-center justify-center">
+        <div className="m-auto flex h-[90%] w-[32rem] flex-col space-y-2 rounded-md border border-neutral-300 bg-white p-2">
           <ChatBox messages={messages} connectedUsers={connectedUsers} />
 
           <ChatForm action={handleForm} inputRef={inputRef} />
         </div>
       </div>
 
-      {error && <ErrorWindow />}
+      {showError && <ErrorWindow />}
     </>
   );
 }
@@ -63,14 +48,14 @@ function ErrorWindow() {
   return (
     <>
       {showWindow && (
-        <div className="fixed rounded top-10 left-10 bg-red-600">
+        <div className="fixed left-10 top-10 rounded-md bg-red-600">
           <button
-            className="absolute top-2 right-4 font-bold"
+            className="absolute right-4 top-2 font-bold"
             onClick={() => setShowWindow(false)}
           >
             X
           </button>
-          <h2 className="text-black text-2xl p-10">
+          <h2 className="p-10 text-2xl text-black">
             Unable to Connect to Backend
           </h2>
         </div>
@@ -89,14 +74,14 @@ function ChatForm({
   const { isSignedIn } = useUser();
 
   return (
-    <form onSubmit={action} className="mx-auto w-full">
+    <form onSubmit={action} className="mx-auto w-full space-y-2">
       <input
-        className="w-full border border-slate-200 p-1 text-xl placeholder:text-neutral-400 focus:outline-none disabled:bg-white"
+        className="w-full rounded-md border border-neutral-300 p-1 text-xl ring-0 ring-slate-600 transition-all placeholder:text-neutral-400 focus:outline-none focus:ring disabled:bg-neutral-400 disabled:placeholder:text-neutral-600"
         placeholder="Send a Message"
         ref={inputRef}
         disabled={!isSignedIn}
       />
-      <span className="flex">
+      <span className="flex space-x-2">
         <SendMessageButton />
         <UserButton />
       </span>

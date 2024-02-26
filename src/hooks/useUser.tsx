@@ -4,6 +4,9 @@ import { clearUser, newUser, setIsLoaded } from "../store/slices/userSlice";
 import { useQuery } from "@tanstack/react-query";
 import { ChatSocket } from "../lib/ChatSocket";
 
+/**
+ * Form of the response from the backend when verifying the user
+ */
 interface QueryRes {
   valid: boolean;
   firstName: string;
@@ -11,6 +14,11 @@ interface QueryRes {
   picture: string;
 }
 
+/**
+ * Used for keeping track of currently signed in user state
+ * @returns Status of the user being loaded/logged in, the user object, and
+ * a sign out function.
+ */
 export default function useUser() {
   const oldToken = Cookie.get("chat_token");
   const selector = useAppSelector((state) => state.user);
@@ -46,7 +54,7 @@ export default function useUser() {
 
       return r;
     },
-    enabled: oldToken !== undefined,
+    enabled: oldToken !== undefined && !selector.isLoaded,
   });
 
   return {
