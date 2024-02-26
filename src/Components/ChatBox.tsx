@@ -35,7 +35,7 @@ export default function ChatBox({
 
       <div
         ref={chatBoxRef}
-        className="mx-auto flex h-full w-full flex-col overflow-y-auto break-all rounded-md bg-slate-100"
+        className="mx-auto flex h-full w-full flex-col overflow-y-auto break-all rounded-md bg-indigo-100"
         onScroll={handleScroll}
       >
         {!isLoaded && (
@@ -45,7 +45,7 @@ export default function ChatBox({
         )}
 
         <button
-          className={`absolute bottom-2 right-6 rounded-full bg-blue-300 px-2 transition-all hover:bg-blue-400 ${showScrollButton ? "scale-100" : "scale-0"}`}
+          className={`absolute bottom-2 right-6 rounded-full bg-indigo-300 px-2 transition-all hover:bg-indigo-400 ${showScrollButton ? "scale-100" : "scale-0"}`}
           onClick={scrollToBottom}
         >
           Scroll to Bottom

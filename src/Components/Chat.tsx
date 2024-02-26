@@ -76,7 +76,7 @@ function ChatForm({
   return (
     <form onSubmit={action} className="mx-auto w-full space-y-2">
       <input
-        className="w-full rounded-md border border-neutral-300 p-1 text-xl ring-0 ring-slate-600 transition-all placeholder:text-neutral-400 focus:outline-none focus:ring disabled:bg-neutral-400 disabled:placeholder:text-neutral-600"
+        className="w-full rounded-md border border-neutral-300 p-1 text-xl ring-0 ring-indigo-600 transition-all placeholder:text-neutral-400 focus:outline-none focus:ring disabled:bg-neutral-400 disabled:placeholder:text-neutral-600"
         placeholder="Send a Message"
         ref={inputRef}
         disabled={!isSignedIn}

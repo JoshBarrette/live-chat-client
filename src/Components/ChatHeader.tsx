@@ -9,14 +9,14 @@ export default function ChatHeader({
 }) {
   return (
     <>
-      <div className="grid w-full grid-cols-3 rounded-md bg-slate-300 text-center text-xl font-semibold">
+      <div className="grid w-full grid-cols-3 rounded-md bg-indigo-300 text-center text-xl font-semibold">
         <a
-          className="flex items-center justify-center rounded-l-md transition-all hover:bg-slate-400"
+          className="flex items-center justify-center rounded-l-md transition-all hover:bg-indigo-400"
           href="https://github.com/JoshBarrette/live-chat-client"
         >
           GitHub
         </a>
-        <h1 className="h-full bg-slate-400 py-2">Live Chat</h1>
+        <h1 className="h-full bg-indigo-400 py-2">Live Chat</h1>
         <UsersButtonAndList connectedUsers={connectedUsers} />
       </div>
     </>
@@ -54,14 +54,14 @@ function UsersButtonAndList({
   return (
     <>
       <button
-        className={`rounded-r-md transition-all hover:bg-slate-400 ${showUsers ? "bg-slate-400" : ""}`}
+        className={`rounded-r-md transition-all hover:bg-indigo-400 ${showUsers ? "bg-indigo-400" : ""}`}
         onClick={() => setShowUsers(!showUsers)}
         ref={usersButtonRef}
       >
         Online Users
       </button>
       <div
-        className={`absolute top-[3.2rem] z-10 max-h-[80%] w-[494px] rounded-md bg-slate-400 text-left text-lg font-medium ${scrollable ? "overflow-y-auto" : "overflow-y-hidden"}`}
+        className={`absolute top-[3.2rem] z-10 max-h-[80%] w-[494px] rounded-md bg-indigo-400 text-left text-lg font-medium ${scrollable ? "overflow-y-auto" : "overflow-y-hidden"}`}
         style={{
           transition: `height 250ms ease-in-out`,
           height: showUsers ? usersRef.current?.scrollHeight : "0px",
