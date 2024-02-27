@@ -32,12 +32,12 @@ export default function UserButton() {
   return (
     <div className="relative" ref={contentRef}>
       <button
-        className={`flex rounded-full ring-indigo-600 transition-all ${showOpts ? "ring ring-offset-1" : "ring-0 ring-offset-0"}`}
+        className={`flex max-h-12 rounded-full ring-indigo-600 transition-all ${showOpts ? "ring ring-offset-1" : "ring-0 ring-offset-0"}`}
       >
         <img
           src={user?.picture}
           alt="profile picture"
-          className="rounded-full bg-indigo-600"
+          className="rounded-full bg-indigo-600 text-sm"
           onClick={toggleShowOpts}
           width="48"
           height="48"

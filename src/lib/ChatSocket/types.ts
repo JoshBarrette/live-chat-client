@@ -7,6 +7,9 @@ export interface ChatMessage {
   picture: string;
 }
 
+/**
+ * Format of connected users sent from the API
+ */
 export interface ConnectedUser {
   username: string;
   picture: string;

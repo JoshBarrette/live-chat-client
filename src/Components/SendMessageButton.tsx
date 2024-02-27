@@ -11,10 +11,15 @@ export default function SendMessageButton() {
           Send Message
         </Button>
       ) : (
-        <Button className="h-12 flex-grow p-0">
-          <a href={`${import.meta.env.VITE_APP_API_URL}/api/auth/google/login`}>
-            <p className="h-full max-w-full rounded-b py-2">Sign In to Chat!</p>
-          </a>
+        <Button className="h-12 w-full flex-grow p-0" type="submit">
+          <div className="h-full w-full">
+            <a
+              href={`${import.meta.env.VITE_APP_API_URL}/api/auth/google/login`}
+              className="flex h-full items-center justify-center"
+            >
+              Sign In to Chat!
+            </a>
+          </div>
         </Button>
       )}
     </>

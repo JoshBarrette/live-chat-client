@@ -30,7 +30,7 @@ export default function Chat() {
   return (
     <>
       <div className="container mx-auto flex h-screen flex-col text-lg">
-        <div className="m-auto flex h-[90%] w-[32rem] flex-col space-y-2 rounded-md border border-neutral-300 bg-white p-2">
+        <div className="m-auto flex h-[90%] w-[32rem] flex-col space-y-2 rounded-md border shadow-2xl shadow-neutral-400 border-neutral-300 bg-white p-2">
           <ChatBox messages={messages} connectedUsers={connectedUsers} />
 
           <ChatForm action={handleForm} inputRef={inputRef} />
