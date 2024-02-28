@@ -15,7 +15,7 @@ export default function Chat() {
 
     if (!user || !inputRef.current) return;
 
-    socket.sendMessage({
+    socket?.sendMessage({
       user: {
         firstName: user.firstName,
         lastName: user.lastName,
