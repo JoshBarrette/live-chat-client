@@ -64,7 +64,13 @@ export default function useUser() {
     signOut: () => {
       ChatSocket.userSignOut();
       dispatch(clearUser());
-      Cookie.remove("chat_token");
+      Cookie.remove("chat_token", {
+        domain:
+          import.meta.env.FRONT_END_URL === "http://localhost:3000"
+            ? import.meta.env.FRONT_END_URL
+            : ".barrette.dev",
+        path: "/",
+      });
     },
   };
 }
