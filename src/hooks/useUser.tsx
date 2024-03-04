@@ -3,8 +3,6 @@ import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { clearUser, newUser, setIsLoaded } from "../store/slices/userSlice";
 import { useQuery } from "@tanstack/react-query";
 import { ChatSocket } from "../lib/ChatSocket";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 
 /**
  * Form of the response from the backend when verifying the user
@@ -26,25 +24,14 @@ export default function useUser() {
   const selector = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const newToken = queryParams.get("token");
-
-  useEffect(() => {
-    if (newToken) {
-      navigate(location.pathname, { replace: true });
-    }
-  });
-
   const { isFetched } = useQuery({
     queryKey: ["useUser"],
     queryFn: async () => {
       const r: QueryRes = await fetch(
-        `${import.meta.env.VITE_APP_API_URL}/api/auth/jwt/verify/${newToken ?? oldToken!}`,
+        `${import.meta.env.VITE_APP_API_URL}/api/auth/jwt/verify/${oldToken}`,
         {
           headers: {
-            Authorization: newToken ?? oldToken!,
+            Authorization: oldToken!,
           },
         },
       )
@@ -57,23 +44,17 @@ export default function useUser() {
             firstName: r.firstName,
             lastName: r.lastName,
             picture: r.picture,
-            token: newToken ?? oldToken!,
+            token: oldToken!,
           }),
           setIsLoaded(true),
         );
-
-        if (newToken) {
-          Cookie.set("chat_token", newToken, { expires: 0.5 });
-        }
       } else {
         dispatch(setIsLoaded(true));
-        Cookie.remove("chat_token");
       }
 
       return r;
     },
-    enabled:
-      (oldToken !== undefined && !selector.isLoaded) || newToken !== null,
+    enabled: oldToken !== undefined && !selector.isLoaded,
   });
 
   return {
@@ -83,13 +64,7 @@ export default function useUser() {
     signOut: () => {
       ChatSocket.userSignOut();
       dispatch(clearUser());
-      Cookie.remove("chat_token", {
-        domain:
-          import.meta.env.FRONT_END_URL === "http://localhost:3000"
-            ? import.meta.env.FRONT_END_URL
-            : ".barrette.dev",
-        path: "/",
-      });
+      Cookie.remove("chat_token");
     },
   };
 }
