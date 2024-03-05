@@ -29,11 +29,6 @@ export default function useUser() {
     queryFn: async () => {
       const r: QueryRes = await fetch(
         `${import.meta.env.VITE_APP_API_URL}/api/auth/jwt/verify/${oldToken}`,
-        {
-          headers: {
-            Authorization: oldToken!,
-          },
-        },
       )
         .then(async (res) => await res.json())
         .catch((e) => console.log(e));
